@@ -1,43 +1,43 @@
 /* Mobile first. Works from 320px wide up. Inputs are 16px so iPhone does not zoom.
  * The page never scrolls sideways; only the plate sheet and tables scroll inside their box. */
 :root {
-  --bg: #f4f6fa;
-  --card: #ffffff;
-  --text: #111827;
-  --muted: #5b6475;
-  --line: #dde2ea;
-  --accent: #2563eb;
+  --bg: #f2eff8;            /* page: light lilac-grey */
+  --card: #fcfbff;
+  --text: #26232f;
+  --muted: #6b667a;
+  --line: #ddd8e8;
+  --accent: #6250d6;        /* lilac / violet */
   --accent-text: #ffffff;
   --danger: #b42318;
   --warn-bg: #fff7e0;
   --warn-line: #f2d98a;
-  --head: #fff3a3;          /* yellow group header, like Excel */
-  --head-text: #3b3200;
-  --tint: #eaf5fb;          /* every second group, like the blue blocks in Excel */
-  --calc: #f1f3f7;          /* read-only (calculated) cells */
-  --series: #2a78d6;        /* chart points */
-  --fit: #52514e;           /* chart fit line */
+  --head: #d9d0f3;          /* group header (was yellow in Excel) */
+  --head-text: #2d2350;
+  --tint: #efe9fb;          /* every second group */
+  --calc: #eceaf1;          /* read-only (calculated) cells: grey */
+  --series: #6250d6;        /* chart points */
+  --fit: #5f5a6e;           /* chart fit line */
   --radius: 14px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1116;
-    --card: #181c23;
-    --text: #e8ebf0;
-    --muted: #9aa3b2;
-    --line: #2a303b;
-    --accent: #5b8dff;
-    --accent-text: #0b0f17;
+    --bg: #17151e;
+    --card: #1f1c28;
+    --text: #ebe8f3;
+    --muted: #a29cb4;
+    --line: #342f43;
+    --accent: #9d8df1;
+    --accent-text: #14112a;
     --danger: #ff8a80;
     --warn-bg: #2b2412;
     --warn-line: #5b4a1c;
-    --head: #5c4e10;
-    --head-text: #fff3c4;
-    --tint: #1b2733;
-    --calc: #13171d;
-    --series: #3987e5;
-    --fit: #c3c2b7;
+    --head: #3c3366;
+    --head-text: #ece6ff;
+    --tint: #272337;
+    --calc: #1a1722;
+    --series: #9085e9;
+    --fit: #b5b0c4;
   }
 }
 
