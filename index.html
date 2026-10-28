@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="MTT calculation tool">
+  <title>MTT Tool</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1 id="title">MTT Tool</h1>
+      <p id="subtitle" class="subtitle"></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="banner" role="note">
+      Template mode. The formulas are demo only. The real MTT formulas go in <code>js/calc.js</code>.
+    </p>
+
+    <div class="grid">
+      <section class="card" aria-labelledby="h-inputs">
+        <h2 id="h-inputs">Inputs</h2>
+        <form id="form" onsubmit="return false" novalidate>
+          <div id="fields"></div>
+          <div class="actions">
+            <button id="save" type="button" class="btn primary">Save</button>
+            <button id="share" type="button" class="btn">Copy link</button>
+            <button id="reset" type="button" class="btn ghost">Reset</button>
+          </div>
+          <input id="share-box" class="share-box" type="text" readonly hidden aria-label="Share link">
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="h-results">
+        <h2 id="h-results">Results</h2>
+        <div id="results" class="results" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="h-history">
+      <div class="card-head">
+        <h2 id="h-history">History</h2>
+        <button id="clear-history" type="button" class="btn small ghost" hidden>Clear</button>
+      </div>
+      <p class="hint">Saved only in this browser. To share with someone, send them the link.</p>
+      <div id="history" class="history"></div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">MTT Tool · starter template v0.1</footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/calc.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
