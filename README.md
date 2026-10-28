@@ -43,7 +43,7 @@ The Excel formulas were read cell by cell. Every computed cell matches Excel, ex
 | `D25:D32` (SD) read shifted ranges: D25 reads the 1 nM wells, D30 the control, D31/D32 reach into empty and header rows | SD of each group's own 9 wells | The formula was copied down and its range moved. %RSD (`E`) and SEM (`G`) use SD, so they were off too |
 | `D18` is a typed number and is the divisor | Default: control average. A fixed value is still available | The typed number is not the control average of the sheet, so control wells came out at about 75% instead of 100% |
 | Chart X values are text (`'0.1'`, `'0.3'`), so Excel plots positions 1 to 8 | X is the real concentration. Log scale available | The trendline in Excel was fitted to positions, not concentrations |
-| Car sheet: `H25:H31` ("Conct Avr") is one row off | Mean OD is calculated per group | Same cause as above |
+| Car sheet: `H25:H31` ("Conct Avr") runs 60 → 0.1 nM, but column B runs 0 → 60 nM, so each value sits next to the wrong concentration | Mean OD is calculated per group | The column was probably pasted from the Doco layout (which is in reverse order) |
 | An empty well counts as 0 | An empty well is skipped, N shows how many wells have numbers | |
 | Header `Conc(uL)` | Unit you can edit (nM) | The groups are in nM |
 
