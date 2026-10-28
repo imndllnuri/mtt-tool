@@ -4,55 +4,149 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="MTT calculation tool">
-  <title>MTT Tool</title>
+  <meta name="description" content="MTT cell viability calculator">
+  <title>MTT Viability Tool</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="top">
     <div class="wrap">
-      <h1 id="title">MTT Tool</h1>
-      <p id="subtitle" class="subtitle"></p>
+      <h1>MTT Viability Tool</h1>
+      <p class="subtitle">Type or paste your plate readings. Everything else is calculated.</p>
     </div>
   </header>
 
   <main class="wrap">
-    <p class="banner" role="note">
-      Template mode. The formulas are demo only. The real MTT formulas go in <code>js/calc.js</code>.
-    </p>
+    <!-- sheet tabs, like the tabs at the bottom of Excel -->
+    <div class="tabs" id="tabs" role="tablist" aria-label="Sheets"></div>
 
-    <div class="grid">
-      <section class="card" aria-labelledby="h-inputs">
-        <h2 id="h-inputs">Inputs</h2>
-        <form id="form" onsubmit="return false" novalidate>
-          <div id="fields"></div>
-          <div class="actions">
-            <button id="save" type="button" class="btn primary">Save</button>
-            <button id="share" type="button" class="btn">Copy link</button>
-            <button id="reset" type="button" class="btn ghost">Reset</button>
-          </div>
-          <input id="share-box" class="share-box" type="text" readonly hidden aria-label="Share link">
-        </form>
+    <section class="card" aria-labelledby="h-sheet">
+      <h2 id="h-sheet" class="sr-only">Sheet settings</h2>
+      <div class="row">
+        <label class="inline">Sheet name <input id="sheet-name" class="mini" type="text" maxlength="24" autocomplete="off"></label>
+        <label class="inline">Unit <input id="unit" class="mini narrow" type="text" maxlength="8" autocomplete="off"></label>
+      </div>
+      <div class="actions">
+        <button id="demo" type="button" class="btn">Fill demo numbers</button>
+        <button id="share" type="button" class="btn primary">Copy link</button>
+      </div>
+      <details class="more">
+        <summary>More: clear, save file, open file, CSV, delete</summary>
+        <div class="actions">
+          <button id="clear" type="button" class="btn ghost">Clear readings</button>
+          <button id="export" type="button" class="btn">Save file</button>
+          <button id="import" type="button" class="btn">Open file</button>
+          <button id="csv" type="button" class="btn">Summary CSV</button>
+          <button id="delete" type="button" class="btn ghost danger">Delete sheet</button>
+        </div>
+      </details>
+      <input id="share-box" class="share-box" type="text" readonly hidden aria-label="Share link">
+      <input id="file" type="file" accept=".json,application/json" hidden>
+    </section>
+
+    <ul id="warnings" class="warnings" aria-live="polite"></ul>
+
+
+    <section class="card sheet-card" aria-labelledby="h-grid">
+      <h2 id="h-grid">Plate sheet</h2>
+      <p class="hint">8 groups × 3 wells, 3 readings each. Scroll sideways. You can paste a block copied from Excel (rows 2–4 or 6–8, columns B–Y) into the first box.</p>
+      <div class="scroll" tabindex="0" role="region" aria-label="Plate sheet, scrolls sideways">
+        <table id="sheet" class="sheet"></table>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-ref">
+      <h2 id="h-ref">100% reference</h2>
+      <p class="hint">Viability % = (reading − blank) ÷ reference × 100.</p>
+      <div class="ref">
+        <label class="choice"><input type="radio" name="refmode" value="auto"> <span>Control average <strong id="ref-auto">–</strong></span></label>
+        <label class="choice"><input type="radio" name="refmode" value="fixed"> <span>Fixed value</span>
+          <input id="ref-fixed" class="mini" type="text" inputmode="decimal" autocomplete="off" aria-label="Fixed reference value"></label>
+      </div>
+      <p id="ref-note" class="hint"></p>
+    </section>
+
+    <div class="stack">
+      <section class="card" aria-labelledby="h-sum">
+        <h2 id="h-sum">Summary</h2>
+        <div class="scroll slim" tabindex="0" role="region" aria-label="Summary table">
+          <table id="summary" class="summary"></table>
+        </div>
       </section>
 
-      <section class="card" aria-labelledby="h-results">
-        <h2 id="h-results">Results</h2>
-        <div id="results" class="results" aria-live="polite"></div>
+      <section class="card" aria-labelledby="h-chart">
+        <div class="card-head">
+          <h2 id="h-chart">Dose response</h2>
+          <div class="seg" role="group" aria-label="X axis scale">
+            <button type="button" class="seg-btn" data-x="linear" aria-pressed="true">Linear</button>
+            <button type="button" class="seg-btn" data-x="log" aria-pressed="false">Log</button>
+          </div>
+        </div>
+        <div class="keys" aria-hidden="true">
+          <span class="key"><i class="key-dot"></i>Mean % viability</span>
+          <span class="key"><i class="key-line"></i>Linear fit</span>
+        </div>
+        <div id="chart" class="chart-wrap"></div>
+        <p id="fit" class="hint"></p>
       </section>
     </div>
 
-    <section class="card" aria-labelledby="h-history">
-      <div class="card-head">
-        <h2 id="h-history">History</h2>
-        <button id="clear-history" type="button" class="btn small ghost" hidden>Clear</button>
-      </div>
-      <p class="hint">Saved only in this browser. To share with someone, send them the link.</p>
-      <div id="history" class="history"></div>
+    <section class="card guide" aria-labelledby="h-guide">
+      <details>
+        <summary id="h-guide">Guide: what each Excel cell does</summary>
+
+        <h3>How the page works</h3>
+        <ol>
+          <li>Type the plate-reader numbers (OD) into <strong>Plate readings</strong>. Type the blank wells into <strong>Blank readings</strong>.</li>
+          <li>The page subtracts the blank from each reading.</li>
+          <li>It finds the control average. This is the 100% reference.</li>
+          <li>It turns every well into a viability % of that reference.</li>
+          <li>For each group it shows the mean, SD, %RSD, N and SEM. It draws the chart.</li>
+        </ol>
+
+        <h3>Excel cell → page</h3>
+        <div class="scroll slim" tabindex="0" role="region" aria-label="Excel cell guide">
+          <table class="summary guide-table">
+            <thead><tr><th>Excel cells</th><th>What it is</th><th>Formula</th><th>On the page</th></tr></thead>
+            <tbody>
+              <tr><td>B1:Y1, B5…, B13…, B19…</td><td>Yellow group names. Each covers 3 wells. <em>Kontrol</em> = control.</td><td>text</td><td>Group name boxes</td></tr>
+              <tr><td>B2:Y4</td><td>Plate readings (OD). 3 readings (<em>Okuma</em> = reading) of 24 wells.</td><td>typed</td><td>Plate readings</td></tr>
+              <tr><td>B6:Y8</td><td>Blank readings: wells without cells.</td><td>typed (0)</td><td>Blank readings</td></tr>
+              <tr><td>B14:Y16</td><td>Corrected OD</td><td>reading − blank</td><td>Reading − Blank</td></tr>
+              <tr><td>C18</td><td>Control average</td><td>AVERAGE(B14:D16)</td><td>Control average</td></tr>
+              <tr><td>D18</td><td>The number used as 100%. Typed by hand in Excel.</td><td>typed</td><td>100% reference setting</td></tr>
+              <tr><td>B20:Y22</td><td>% viability of each well</td><td>corrected ÷ D18 × 100</td><td>% viability</td></tr>
+              <tr><td>B25:B32</td><td>Concentration of each group</td><td>typed</td><td>Conc boxes</td></tr>
+              <tr><td>C25:C32</td><td>Mean % viability</td><td>AVERAGE of the group's 9 wells</td><td>Summary: % Viability</td></tr>
+              <tr><td>D25:D32</td><td>SD (spread)</td><td>STDEV.S</td><td>Summary: SD</td></tr>
+              <tr><td>E25:E32</td><td>%RSD</td><td>SD ÷ mean × 100</td><td>Summary: %RSD</td></tr>
+              <tr><td>F25:F32</td><td>N (how many wells)</td><td>COUNT</td><td>Summary: N</td></tr>
+              <tr><td>G25:G32</td><td>SEM (error of the mean)</td><td>SD ÷ √N</td><td>Summary: SEM</td></tr>
+              <tr><td>H25:H32</td><td>"Conct Avr" = average corrected OD</td><td>AVERAGE of corrected OD</td><td>Summary: Mean OD</td></tr>
+              <tr><td>Chart</td><td>Points: concentration vs % viability, with a straight trendline, equation and R²</td><td>linear fit</td><td>Dose response</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>What is different from your Excel sheet</h3>
+        <ul>
+          <li><strong>SD, %RSD, SEM:</strong> the page uses each group's own wells. In Excel, column D reads the wrong blocks (for example D25 reads the 1 nM wells, D30 reads the control, D31 and D32 reach into empty rows). The formula was copied down and its range moved.</li>
+          <li><strong>100% reference:</strong> Excel divides by a typed number in D18. The page uses the control average by default. You can still choose a fixed value.</li>
+          <li><strong>Empty wells</strong> are skipped, so N shows how many wells have numbers. In Excel an empty well counts as 0.</li>
+          <li><strong>Chart:</strong> concentration is a real number on the X axis. In Excel the concentrations are stored as text, so the chart used positions 1 to 8. A log scale is available.</li>
+          <li><strong>Mean OD ("Conct Avr")</strong> is calculated for every group, including the control. In the Car sheet the Excel column was one row off.</li>
+          <li><strong>Summary order:</strong> lowest concentration first.</li>
+          <li><strong>Units:</strong> the Excel header says "Conc(uL)". The page uses a unit you can edit (nM).</li>
+        </ul>
+
+        <h3>Sharing</h3>
+        <p><strong>Copy link</strong> puts the current sheet inside the link. Whoever opens it gets a copy as a new tab. Your sheets are saved only in this browser. <strong>Save file</strong> and <strong>Open file</strong> move all sheets between computers.</p>
+      </details>
     </section>
   </main>
 
-  <footer class="wrap foot">MTT Tool · starter template v0.1</footer>
+  <footer class="wrap foot">MTT Viability Tool · v0.2</footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="js/calc.js"></script>
